@@ -1,4 +1,4 @@
-AnimateAnyone-Reproduced
+# AnimateAnyone-Reproduced
 Consistent and Controllable Image-to-Video Synthesis for Character Animation
 This repository contains our reproduction of the AnimateAnyone model, a framework for generating high-fidelity, temporally consistent character animations from a single reference image and pose sequences. Our implementation aims to closely replicate the original pipeline while introducing extensions for improved usability, flexibility, and performance. This project is intended for academic research and demonstration purposes.
 # 🌟 Features
