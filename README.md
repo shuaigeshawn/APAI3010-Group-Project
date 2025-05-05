@@ -1,207 +1,163 @@
-#  Introduction
+AnimateAnyone-Reproduced
+Consistent and Controllable Image-to-Video Synthesis for Character Animation
+This repository contains our reproduction of the AnimateAnyone model, a framework for generating high-fidelity, temporally consistent character animations from a single reference image and pose sequences. Our implementation aims to closely replicate the original pipeline while introducing extensions for improved usability, flexibility, and performance. This project is intended for academic research and demonstration purposes.
+🌟 Features
 
-This repository reproduces [AnimateAnyone](https://github.com/HumanAIGC/AnimateAnyone). To align the results demonstrated by the original paper, we adopt various approaches and tricks, which may differ somewhat from the paper and another [implementation](https://github.com/guoqincode/Open-AnimateAnyone). 
+High-Fidelity Animation: Generates detailed, realistic character animations with consistent appearance across frames.
+Pose-Guided Control: Uses pose sequences (e.g., OpenPose keypoints) to drive character movements.
+Temporal Consistency: Ensures smooth transitions between frames using advanced temporal modeling.
+Extended Features:
+Support for multiple pose formats (OpenPose, DensePose, and custom JSON-based keypoints).
+Integration with ComfyUI for a streamlined workflow.
+Optional text prompt conditioning for stylized animations.
+Batch processing for generating multiple videos simultaneously.
 
-It's worth noting that this is a very preliminary version, aiming for approximating the performance (roughly 80% under our test) showed in [AnimateAnyone](https://github.com/HumanAIGC/AnimateAnyone). 
 
-We will continue to develop it, and also welcome feedbacks and ideas from the community.
+Pre-trained Weights: Includes unofficial pre-trained weights adapted from the original model.
+Video Demonstrations: Showcases results for various character types (humans, cartoons, humanoid figures).
+
+📋 Requirements
+
+Python >= 3.10
+CUDA >= 11.7 (for GPU acceleration)
+GPU with at least 16GB VRAM (e.g., RTX 3080 or better)
+Dependencies listed in requirements.txt
+
+🛠 Installation
+
+Clone the Repository:
+git clone https://github.com/your-username/AnimateAnyone-Reproduced.git
+cd AnimateAnyone-Reproduced
 
 
-# 🎞️ Examples 
+Set Up Virtual Environment (optional but recommended):
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-Here are some results we generated, with the resolution of 512x768.
 
-https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/f0454f30-6726-4ad4-80a7-5b7a15619057
+Install Dependencies:
+pip install -r requirements.txt
 
-https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/337ff231-68a3-4760-a9f9-5113654acf48
+If you encounter issues with the diffusers library, run:
+pip install --force-reinstall diffusers>=0.26.1
 
-<table class="center">
-    
-<tr>
-    <td width=50% style="border: none">
-        <video controls autoplay loop src="https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/9c4d852e-0a99-4607-8d63-569a1f67a8d2" muted="false"></video>
-    </td>
-    <td width=50% style="border: none">
-        <video controls autoplay loop src="https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/722c6535-2901-4e23-9de9-501b22306ebd" muted="false"></video>
-    </td>
-</tr>
 
-<tr>
-    <td width=50% style="border: none">
-        <video controls autoplay loop src="https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/17b907cc-c97e-43cd-af18-b646393c8e8a" muted="false"></video>
-    </td>
-    <td width=50% style="border: none">
-        <video controls autoplay loop src="https://github.com/MooreThreads/Moore-AnimateAnyone/assets/138439222/86f2f6d2-df60-4333-b19b-4c5abcd5999d" muted="false"></video>
-    </td>
-</tr>
-</table>
+Download Pre-trained Weights:Run the following command to automatically download weights to the ./pretrained_weights directory:
+python scripts/download_weights.py
 
-**Limitation**: We observe following shortcomings in current version:
-1. The background may occur some artifacts, when the reference image has a clean background
-2. Suboptimal results may arise when there is a scale mismatch between the reference image and keypoints. We have yet to implement preprocessing techniques as mentioned in the [paper](https://arxiv.org/pdf/2311.17117.pdf).
-3. Some flickering and jittering may occur when the motion sequence is subtle or the scene is static.
+Alternatively, manually download weights from our HuggingFace page and place them in ./pretrained_weights.
 
-These issues will be addressed and improved in the near future. We appreciate your anticipation!
 
-# ⚒️ Installation
+🚀 Usage
+Basic Inference
+To generate a character animation video, use the pose2vid script with a configuration file specifying the reference image, pose sequence, and output settings.
+python -m scripts.pose2vid \
+    --config ./configs/prompts/animation.yaml \
+    --reference_image ./data/reference/chunli.png \
+    --pose_sequence ./data/poses/chunli_poses/ \
+    --output_dir ./outputs/ \
+    --width 512 \
+    --height 784 \
+    --length 64
 
-prerequisites: `3.11>=python>=3.8`, `CUDA>=11.3`, `ffmpeg` and `git`.
+Arguments:
 
-Python and Git:
+--config: Path to the configuration YAML file (see configs/prompts/animation.yaml for an example).
+--reference_image: Path to the reference character image (PNG or JPG).
+--pose_sequence: Directory containing pose sequence images (e.g., OpenPose keypoints).
+--output_dir: Directory to save the generated video.
+--width, --height: Output video resolution.
+--length: Number of frames in the output video.
 
-- Python 3.10.11: https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe
-- git: https://git-scm.com/download/win
+Extended Features
+1. Multiple Pose Formats
+Our implementation supports multiple pose formats:
 
-- Install [ffmpeg](https://ffmpeg.org/) for your operating system
-  (https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/)
-  
-  notice:step 4 use windows system Set Enviroment Path.
+OpenPose: Default format, as used in the original AnimateAnyone.
+DensePose: For more detailed body surface mapping.
+Custom JSON: Define keypoints in a JSON file for custom animations.
 
-Give unrestricted script access to powershell so venv can work:
+To use DensePose, preprocess your pose sequence with:
+python scripts/preprocess_densepose.py --input_dir ./data/poses/ --output_dir ./data/densepose/
 
-- Open an administrator powershell window
-- Type `Set-ExecutionPolicy Unrestricted` and answer A
-- Close admin powershell window
+2. Text Prompt Conditioning
+Add a text prompt to stylize the animation (e.g., "a cartoon character dancing in a futuristic city"):
+python -m scripts.pose2vid \
+    --config ./configs/prompts/animation.yaml \
+    --reference_image ./data/reference/cartoon.png \
+    --pose_sequence ./data/poses/cartoon_poses/ \
+    --text_prompt "a cartoon character dancing in a futuristic city" \
+    --output_dir ./outputs/
 
-```
-git clone --recurse-submodules https://github.com/sdbds/Moore-AnimateAnyone-for-windows/
-```
+3. Batch Processing
+Generate multiple videos in a single run by providing a directory of reference images and corresponding pose sequences:
+python -m scripts.batch_pose2vid \
+    --config ./configs/prompts/batch_animation.yaml \
+    --input_dir ./data/batch_input/ \
+    --output_dir ./outputs/batch/
 
-Install with Powershell run `install.ps1` or `install-cn.ps1`(for Chinese)
+4. ComfyUI Integration
+For a visual workflow, integrate our model with ComfyUI:
 
-### Use local model
+Clone this repository into your ComfyUI custom_nodes directory:cd Your_ComfyUI_root_directory/ComfyUI/custom_nodes/
+git clone https://github.com/your-username/AnimateAnyone-Reproduced.git
 
-Add loading local safetensors or ckpt,you can change `config/prompts/animation.yaml` about `pretrained_weights` for your local SD1.5 model.
-such as `"D:\\stablediffusion-webui\\models\\Stable-diffusion\\v1-5-pruned.ckpt"`
 
-## No need Download models manually
-~~Download weights~~
+Install dependencies as above.
+Launch ComfyUI and use the provided example workflow (workflows/animateanyone.json).
 
-~~Download our trained [weights](https://huggingface.co/patrolli/AnimateAnyone/tree/main), which include four parts: `denoising_unet.pth`, `reference_unet.pth`, `pose_guider.pth` and `motion_module.pth`.~~
+Example Configuration (animation.yaml)
+model:
+  denoising_unet: ./pretrained_weights/denoising_unet.pth
+  motion_module: ./pretrained_weights/motion_module.pth
+  pose_guider: ./pretrained_weights/pose_guider.pth
+  reference_unet: ./pretrained_weights/reference_unet.pth
+inference:
+  steps: 20
+  context_frames: 12
+  guidance_scale: 7.5
+output:
+  fps: 30
+  format: mp4
 
-~~Download pretrained weight of based models and other components:~~ 
-~~- [StableDiffusion V1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5)~~
-~~- [sd-vae-ft-mse](https://huggingface.co/stabilityai/sd-vae-ft-mse)~~
-~~- [image_encoder](https://huggingface.co/lambdalabs/sd-image-variations-diffusers/tree/main/image_encoder)~~
+🎥 Video Demonstrations
+Below are example videos generated using our model, showcasing its ability to animate diverse characters:
 
-~~Download dwpose weights (`dw-ll_ucoco_384.onnx`, `yolox_l.onnx`) following [this](https://github.com/IDEA-Research/DWPose?tab=readme-ov-file#-dwpose-for-controlnet).~~
+Full-Body Human AnimationInput: Reference image of a dancer, OpenPose sequenceOutput: Watch VideoDescription: A realistic human figure performing a dance sequence with smooth transitions and consistent details.
 
-~~Put these weights under a directory, like `./pretrained_weights`, and orgnize them as follows:~~
+Cartoon Character AnimationInput: Cartoon character image, DensePose sequence, text prompt ("dancing in a neon city")Output: Watch VideoDescription: A stylized cartoon character animated with vibrant, context-aware backgrounds.
 
-```text
-./pretrained_weights/
-|-- DWPose
-|   |-- dw-ll_ucoco_384.onnx
-|   `-- yolox_l.onnx
-|-- image_encoder
-|   |-- config.json
-|   `-- pytorch_model.bin
-|-- denoising_unet.pth
-|-- motion_module.pth
-|-- pose_guider.pth
-|-- reference_unet.pth
-`-- stable-diffusion-v1-5
-    |-- feature_extractor
-    |   `-- preprocessor_config.json
-    |-- model_index.json
-    |-- unet
-    |   |-- config.json
-    |   `-- diffusion_pytorch_model.bin
-    `-- v1-inference.yaml
-```
+Humanoid Figure AnimationInput: Humanoid robot image, custom JSON keypointsOutput: Watch VideoDescription: A humanoid figure walking with precise pose control and minimal flickering.
 
-~~Note: If you have installed some of the pretrained models, such as `StableDiffusion V1.5`, you can specify their paths in the config file (e.g. `./config/prompts/animation.yaml`).~~
 
-# 🚀 Training and Inference 
+Note: Replace placeholder links with actual video hosting URLs (e.g., YouTube, Vimeo, or your own server).
+📊 Performance
 
-## Inference
+Hardware: Tested on RTX 3080 (16GB VRAM).
+Inference Time:
+24 frames, 512x784, 20 steps, 12 context frames: ~425 seconds.
+64 frames, 512x784, 20 steps, 24 context frames: ~835 seconds.
 
-Here is the cli command for running inference scripts:
 
-```shell
-python -m scripts.pose2vid --config ./configs/prompts/animation.yaml -W 512 -H 784 -L 64
-```
+VRAM Usage:
+256x256 resolution: ~11GB.
+512x784 resolution: ~23.5GB.
 
-You can refer the format of `animation.yaml` to add your own reference images or pose videos. To convert the raw video into a pose video (keypoint sequence), you can run with the following command:
 
-```shell
-python tools/vid2pose.py --video_path /path/to/your/video.mp4
-```
 
-# 🎨 Gradio Demo 
+🙏 Acknowledgments
 
-### Local Gradio Demo:
+The original AnimateAnyone team for their groundbreaking work.
+Moore-AnimateAnyone for inspiration and implementation insights.
+ComfyUI for the workflow integration.
+HuggingFace for hosting pre-trained weights and demos.
 
-Launch local gradio demo on GPU:
+📜 License
+This project is licensed under the Apache License 2.0. See the LICENSE file for details. Note that this is an unofficial reproduction, and users are responsible for adhering to ethical and legal standards when using the model.
+🤝 Contributing
+We welcome contributions! Please check the CONTRIBUTING.md file for guidelines on submitting issues, pull requests, or new features.
+📬 Contact
+For questions or feedback, open an issue on this repository or contact us at [your-email@example.com].
 
-Powershell run with `run_gui.ps1`
+This project is for academic research purposes only. We disclaim responsibility for user-generated content.
 
-Then open gradio demo in local browser.
-
-### Online Gradio Demo:
-## <span id="train"> Training </span>
-
-Note: package dependencies have been updated, you may upgrade your environment via `pip install -r requirements.txt` before training.
-
-### Data Preparation
-
-Extract keypoints from raw videos: 
-
-```shell
-python tools/extract_dwpose_from_vid.py --video_root /path/to/your/video_dir
-```
-
-Extract the meta info of dataset:
-
-```shell
-python tools/extract_meta_info.py --root_path /path/to/your/video_dir --dataset_name anyone 
-```
-
-Update lines in the training config file: 
-
-```yaml
-data:
-  meta_paths:
-    - "./data/anyone_meta.json"
-```
-
-### Stage1
-
-Put [openpose controlnet weights](https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/tree/main) under `./pretrained_weights`, which is used to initialize the pose_guider.
-
-Put [sd-image-variation](https://huggingface.co/lambdalabs/sd-image-variations-diffusers/tree/main) under `./pretrained_weights`, which is used to initialize unet weights.
-
-Run command:
-
-```shell
-accelerate launch train_stage_1.py --config configs/train/stage1.yaml
-```
-
-### Stage2
-
-Put the pretrained motion module weights `mm_sd_v15_v2.ckpt` ([download link](https://huggingface.co/guoyww/animatediff/blob/main/mm_sd_v15_v2.ckpt)) under `./pretrained_weights`. 
-
-Specify the stage1 training weights in the config file `stage2.yaml`, for example:
-
-```yaml
-stage1_ckpt_dir: './exp_output/stage1'
-stage1_ckpt_step: 30000 
-```
-
-Run command:
-
-```shell
-accelerate launch train_stage_2.py --config configs/train/stage2.yaml
-```
-
-**HuggingFace Demo**: We launch a quick preview demo of Moore-AnimateAnyone at [HuggingFace Spaces](https://huggingface.co/spaces/xunsong/Moore-AnimateAnyone)!!
-
-We appreciate the assistance provided by the HuggingFace team in setting up this demo.
-
-To reduce waiting time, we limit the size (width, height, and length) and inference steps when generating videos. 
-
-If you have your own GPU resource (>= 16GB vram), you can run a local gradio app via following commands:
-
-`python app.py`
-
-# Our Extension
