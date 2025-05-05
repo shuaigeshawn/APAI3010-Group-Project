@@ -75,12 +75,12 @@ Below are example videos generated using our model, showcasing its ability to an
 https://github.com/user-attachments/assets/6c9572f5-e991-4c94-a1b7-e6400d160b85
 
 
-Cartoon Character AnimationInput: Cartoon character image, DensePose sequence, text prompt ("dancing in a neon city")Output: Watch VideoDescription: A stylized cartoon character animated with vibrant, context-aware backgrounds.
 
-Humanoid Figure AnimationInput: Humanoid robot image, custom JSON keypointsOutput: Watch VideoDescription: A humanoid figure walking with precise pose control and minimal flickering.
+https://github.com/user-attachments/assets/419b311c-37f4-4db2-9736-226aa3a832b2
 
 
-Note: Replace placeholder links with actual video hosting URLs (e.g., YouTube, Vimeo, or your own server).
+
+
 
 
 # 🙏 Acknowledgments
