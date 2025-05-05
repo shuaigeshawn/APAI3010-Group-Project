@@ -4,7 +4,7 @@ This repository reproduces [AnimateAnyone](https://github.com/HumanAIGC/AnimateA
 
 It's worth noting that this is a very preliminary version, aiming for approximating the performance (roughly 80% under our test) showed in [AnimateAnyone](https://github.com/HumanAIGC/AnimateAnyone). 
 
-We will continue to develop it, and also welcome feedbacks and ideas from the community. The enhanced version will also be launched on our [MoBi MaLiang](https://maliang.mthreads.com/) AIGC platform, running on our own full-featured GPU S4000 cloud computing platform.
+We will continue to develop it, and also welcome feedbacks and ideas from the community.
 
 
 # 🎞️ Examples 
