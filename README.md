@@ -72,7 +72,8 @@ python -m scripts.batch_pose2vid \
 # 🎥 Video Demonstrations
 Below are example videos generated using our model, showcasing its ability to animate diverse characters:
 
-Full-Body Human AnimationInput: Reference image of a dancer, OpenPose sequenceOutput: Watch VideoDescription: A realistic human figure performing a dance sequence with smooth transitions and consistent details.
+https://github.com/user-attachments/assets/6c9572f5-e991-4c94-a1b7-e6400d160b85
+
 
 Cartoon Character AnimationInput: Cartoon character image, DensePose sequence, text prompt ("dancing in a neon city")Output: Watch VideoDescription: A stylized cartoon character animated with vibrant, context-aware backgrounds.
 
