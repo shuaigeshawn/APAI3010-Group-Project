@@ -6,12 +6,6 @@ This repository contains our reproduction of the AnimateAnyone model, a framewor
 High-Fidelity Animation: Generates detailed, realistic character animations with consistent appearance across frames.
 Pose-Guided Control: Uses pose sequences (e.g., OpenPose keypoints) to drive character movements.
 Temporal Consistency: Ensures smooth transitions between frames using advanced temporal modeling.
-Extended Features:
-Support for multiple pose formats (OpenPose, DensePose, and custom JSON-based keypoints).
-Integration with ComfyUI for a streamlined workflow.
-Optional text prompt conditioning for stylized animations.
-Batch processing for generating multiple videos simultaneously.
-
 
 Pre-trained Weights: Includes unofficial pre-trained weights adapted from the original model.
 Video Demonstrations: Showcases results for various character types (humans, cartoons, humanoid figures).
