@@ -88,7 +88,7 @@ def overlay_on_background(frame, mask, bg_frame):
     return combined
 
 def process_video(video_path, bg_video_path, output_path):
-    device = torch.device('mps' if torch.mps.is_available() else 'cpu')
+    device = torch.device('mps' if torch.mps.is_available() else 'cuda' if torch.cuda.is_available() else 'cpu')
     model = load_model().to(device)
     
     # 打开输入视频和背景视频
